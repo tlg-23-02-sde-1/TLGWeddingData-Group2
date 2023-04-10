@@ -1,14 +1,6 @@
-
-// middleware to see whats in the html form
-const bodyParser = require('body-parser')
-
 //express uses Node.js to write serverside stuff in js
 const express = require('express')
 const app = express()
-const endpoint = "/"
-const callback = app.get('/',(req,res) => {
-    res.sendFile('C:/Users/Shigetomi/desktop/nellyClass/TLGWeddingPage/' + '/RSVP/rsvp.html')
-})
 
 //MongoDB
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -20,13 +12,30 @@ MongoClient.connect(uri,{useUnifiedTopology: true})
         const db = client.db('guest-info')
         const quotesCollection = db.collection('rsvp-form')
     
-        app.use(bodyParser.urlencoded({extended:true}))
-        app.get(endpoint, callback)
-        app.post('/guestInfo',(req,res)=> {
+        app.use(express.urlencoded({extended:true}))
+
+        // done on front end
+        // app.get('/',(req,res) => {
+        //     res.sendFile('C:/Users/Shigetomi/desktop/nellyClass/TLGWeddingPage/' + '/RSVP/rsvp.html')
+        // })
+
+        app.post('/guests',(req,res)=> {
+            //make sure I get was I expect
+            console.log(req.body);
+            
+            //let fname = req.body.fname;
+            let {fname,lname,email,headCount} = req.body;
+
+            // data validate server side
+            if(!fname || !lname || !email || !headCount) {
+                return res.status(400).send({msg:"form incomplete"});
+            }
             quotesCollection
-                .insertOne(req.body)
+                .insertOne({
+                    guest: req.body
+                })
                 .then(result => {
-                    res.redirect('/')
+                    res.send({msg:"success"})
                 })
                 .catch(error => console.error(error))
         })
