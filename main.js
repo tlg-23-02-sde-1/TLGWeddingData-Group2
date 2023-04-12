@@ -2,6 +2,7 @@
 const express = require('express')
 const app = express()
 
+
 //MongoDB
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://justinshigetomi:Subaru2018@weddingguestinfo.ndnuvg6.mongodb.net/?retryWrites=true&w=majority";
@@ -12,6 +13,11 @@ const LocalStrategy = require("passport-local");
 const passportLocalMongoose = require("passport-local-mongoose");
 const User = require("./model/User.js");
 
+//CORS
+const cors = require('cors')
+
+
+
 mongoose.connect(uri)
 .then(()=>console.log('connected'))
 .catch(e=>console.log(e))
@@ -21,8 +27,9 @@ MongoClient.connect(uri,{useUnifiedTopology: true})
         console.log('connected to Database')
         const rsvpDB = client.db('guest-info')
         const guestInfo = rsvpDB.collection('rsvp-form')
-    
-        app.use(express.urlencoded({extended:true}))
+        
+        app.use(express.json())
+        app.use(cors())
 
         app.post('/guests',(req,res)=>{
             console.log(req.body);
@@ -54,18 +61,21 @@ MongoClient.connect(uri,{useUnifiedTopology: true})
                     if(result) {
                         console.log("user accepted");
                         //go to profile page ask nelly
-                    
+                        res.send({
+                            success: "success",
+                            url: "./profile.html",
+                        })
                     }
                     else{
-                        res.status(400).send({msg: "password doesn't match"});
+                        res.status(400).send({error: "password doesn't match"});
                     }
                 }
                 else {
-                    res.status(400).send({msg: "user doesn't exist"});
+                    res.status(400).send({error: "user doesn't exist"});
                 }
             }
             catch (error) {
-                res.status(400).send({msg:"error"});
+                res.status(400).send({error:"error"});
             }
         })
 
