@@ -63,7 +63,7 @@ MongoClient.connect(uri,{useUnifiedTopology: true})
                         //go to profile page ask nelly
                         res.send({
                             success: "success",
-                            url: "./profile.html",
+                            url: "./Profile/profile.html",
                         })
                     }
                     else{
