@@ -29,6 +29,7 @@ MongoClient.connect(uri,{useUnifiedTopology: true})
         const guestInfo = rsvpDB.collection('rsvp-form')
         
         app.use(express.json())
+        app.use(express.urlencoded())
         app.use(cors())
 
         app.post('/guests',(req,res)=>{
@@ -46,7 +47,10 @@ MongoClient.connect(uri,{useUnifiedTopology: true})
                     guest: req.body
                 })
                 .then(result => {
-                    res.send({msg:"success"})
+                    res.send({
+                        success: "success",
+                        url:"./rsvped.html",
+                    })
                 })
                 .catch(error => console.error(error))
         })
